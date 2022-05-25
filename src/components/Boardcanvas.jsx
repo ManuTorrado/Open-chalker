@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const BoardCanvas = (props) => {
+  const store = useSelector((state) => state);
+  const dispatcher = useDispatch();
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -34,7 +37,10 @@ const BoardCanvas = (props) => {
     canvas.height = window.innerWidth * 1;
     canvas.style.width = `100%`;
     canvas.style.height = `100%`;
-
+    // Avoids right click dialog
+    canvas.oncontextmenu = (e) => {
+      e.preventDefault();
+    };
     const context = canvas.getContext("2d");
 
     context.scale(1, 1);
@@ -44,8 +50,14 @@ const BoardCanvas = (props) => {
     contextRef.current = context;
   }, []);
 
+  const keyPressed = () => {
+    console.log("room: key pressed");
+  };
+
   return (
     <canvas
+      tabIndex={0}
+      onKeyDown={keyPressed}
       onMouseDown={startDrawing}
       onMouseUp={finishDrawing}
       onMouseMove={draw}
